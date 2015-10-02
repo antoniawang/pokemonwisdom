@@ -1,3 +1,4 @@
+import json
 import nltk
 import random
 from quotes import raw_quotes
@@ -5,14 +6,13 @@ from pokemon_names import names
 
 #Choose a random Pokemon index number
 pokemon_index = random.randint(0, len(names))
-#print pokemon_index
+
 pokemon_selected = names[pokemon_index]
-#print pokemon_selected
+
 
 
 #Turn raw quotes into a list of tuples (quote, author)
 quotes = []
-#print len(raw_quotes)
 
 for i in range(0, len(raw_quotes), 2):
 	quotes.append((raw_quotes[i],raw_quotes[i+1]))
@@ -20,21 +20,16 @@ for i in range(0, len(raw_quotes), 2):
 
 #Choose a random quote
 quote_selected = random.choice(quotes)
-# print quote_selected
-
-#quote = random.choice(quotes)
 text = nltk.word_tokenize(quote_selected[0])
-
-
 
 #Find a random noun in the quote
 noun_tags = ["NN","NNS","NNP","NNPS","PRP"]
 quote_split = nltk.pos_tag(text)
-# print quote_split
+
 nouns = [word for word, part in quote_split if part in noun_tags]
-# print nouns
+
 noun_to_replace = random.choice(nouns) #need to take out repeats
-# print noun_to_replace
+
 
 quote_selected = (quote_selected[0].replace(noun_to_replace,pokemon_selected), quote_selected[1])
 
@@ -43,12 +38,20 @@ tweet = quote_selected[0] + " " + quote_selected[1] + " #pokemon #wisdom"
 
 print tweet
 
-#tweet = "\n".join(quote)
+#turn tweet into dictionary to jsonify
+tweet_dict = {"tweet":tweet,
+			  "okay": False,
+			  "tweeted_on": None
+			  }
 
-if len(tweet) > 280:
-	print tweet
-	print len(tweet)
+#jsonifying
+with open("tweets.json", "r") as fp:
+	tweets_string = fp.read()
 
+all_tweets_dicts = json.loads(tweets_string)
+all_tweets_dicts.append(tweet_dict)
+serialized_tweets_list = json.dumps(all_tweets_dicts, indent=4, separators=(",",":"))
 
-
-
+#dump to json file
+with open("tweets.json", "w+") as fp:
+	fp.write(serialized_tweets_list)
