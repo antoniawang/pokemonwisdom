@@ -1,18 +1,21 @@
-
-import os 
+import os, time, sys
 import twitter
-import pokemon_wisdom
+from pokemon_wisdom import create_wisdom
 
+while True:
+	api = twitter.Api(
+	    consumer_key=os.environ['TWITTER_CONSUMER_KEY'],
+	    consumer_secret=os.environ['TWITTER_CONSUMER_SECRET'],
+	    access_token_key=os.environ['TWITTER_ACCESS_TOKEN_KEY'],
+	    access_token_secret=os.environ['TWITTER_ACCESS_TOKEN_SECRET'])
 
-api = twitter.Api(
-    consumer_key=os.environ['TWITTER_CONSUMER_KEY'],
-    consumer_secret=os.environ['TWITTER_CONSUMER_SECRET'],
-    access_token_key=os.environ['TWITTER_ACCESS_TOKEN_KEY'],
-    access_token_secret=os.environ['TWITTER_ACCESS_TOKEN_SECRET'])
+	#check if credentials are correct
+	print api.VerifyCredentials()
 
-#check if credentials are correct
-print api.VerifyCredentials()
+	#send a tweet every 24 hours
+	status = create_wisdom()
 
-#send a tweet
-status = api.PostUpdate(pokemon_wisdom.tweet)
-print status.text
+	api.PostUpdate(status)
+	time.sleep(86400)
+
+	print status.text
