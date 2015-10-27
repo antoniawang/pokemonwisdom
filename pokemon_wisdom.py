@@ -37,4 +37,7 @@ def create_wisdom():
 
 	tweet = quote_selected[0] + " " + quote_selected[1] + " #pokemon #wisdom"
 
-	return tweet
+	if len(tweet) <= 140:
+		return tweet
+	else:
+		create_wisdom()
