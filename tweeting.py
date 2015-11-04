@@ -14,8 +14,7 @@ while True:
 
 	#send a tweet every 24 hours
 	status = create_wisdom()
+	print status
 
 	api.PostUpdate(status)
 	time.sleep(86400)
-
-	print status.text
