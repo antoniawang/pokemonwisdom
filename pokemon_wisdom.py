@@ -1,8 +1,18 @@
 import json
 import nltk
 import random
-from quotes import raw_quotes
+import time
+
+from urllib2 import urlopen
 from pokemon_names import names
+
+def get_quotesondesign():
+        json_quotesondesign = "http://quotesondesign.com/api/3.0/api-3.0.json"
+        response = urlopen(json_quotesondesign).read()
+        results_dict = json.loads(response)
+        if results_dict:
+            quote_selected = (results_dict['quote'].rstrip(), results_dict['author'])
+        return quote_selected
 
 def create_wisdom():
 
@@ -12,15 +22,8 @@ def create_wisdom():
 	pokemon_selected = names[pokemon_index]
 
 
-	#Turn raw quotes into a list of tuples (quote, author)
-	quotes = []
-
-	for i in range(0, len(raw_quotes), 2):
-		quotes.append((raw_quotes[i],raw_quotes[i+1]))
-
-
-	#Choose a random quote
-	quote_selected = random.choice(quotes)
+	#Get quote from API
+	quote_selected = get_quotesondesign()
 	text = nltk.word_tokenize(quote_selected[0])
 
 	#Find a random noun in the quote
@@ -31,13 +34,15 @@ def create_wisdom():
 
 	noun_to_replace = random.choice(nouns) #need to take out repeats
 
-
 	quote_selected = (quote_selected[0].replace(noun_to_replace,pokemon_selected), quote_selected[1])
 
-
-	tweet = quote_selected[0] + " " + quote_selected[1] + " #pokemon #wisdom"
+	tweet = quote_selected[0] + " -" + quote_selected[1] + " #pokemon #wisdom"
 
 	if len(tweet) <= 140:
 		return tweet
 	else:
+		minutes = 10
+		time.sleep(minutes*60)
 		create_wisdom()
+
+print create_wisdom()
