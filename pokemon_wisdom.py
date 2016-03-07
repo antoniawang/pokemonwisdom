@@ -1,3 +1,4 @@
+import HTMLParser
 import json
 import nltk
 import random
@@ -11,7 +12,8 @@ def get_quotesondesign():
         response = urlopen(json_quotesondesign).read()
         results_dict = json.loads(response)
         if results_dict:
-            quote_selected = (results_dict['quote'].rstrip(), results_dict['author'])
+            quote_selected = (HTMLParser.HTMLParser().unescape(results_dict['quote'].rstrip()), HTMLParser.HTMLParser().unescape(results_dict['author']))
+        print quote_selected
         return quote_selected
 
 def create_wisdom():
