@@ -3,3 +3,4 @@ secrets.sh
 env
 tweets.json
 static/
+*.json
