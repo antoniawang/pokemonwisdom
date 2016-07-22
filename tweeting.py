@@ -12,7 +12,10 @@ api = twitter.Api(
 print api.VerifyCredentials()
 
 #send a tweet every 24 hours
-status = create_wisdom()
+status, pic_file = create_wisdom()
 print status
 
-api.PostUpdate(status)
+# when media no longer counts towards 140 characters, add media=pic_file option
+api.PostUpdate(status=status)
+
+pic_file.close()
