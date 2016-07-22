@@ -5,24 +5,29 @@ import random
 import time
 
 from urllib2 import urlopen
-from pokemon_names import names
+#from pokemon_names import names
 
 def get_quotesondesign():
-        json_quotesondesign = "http://quotesondesign.com/api/3.0/api-3.0.json"
-        response = urlopen(json_quotesondesign).read()
-        results_dict = json.loads(response)
-        if results_dict:
-            quote_selected = (HTMLParser.HTMLParser().unescape(results_dict['quote'].rstrip()), HTMLParser.HTMLParser().unescape(results_dict['author']))
-        print quote_selected
-        return quote_selected
+    json_quotesondesign = "http://quotesondesign.com/api/3.0/api-3.0.json"
+    response = urlopen(json_quotesondesign).read()
+    results_dict = json.loads(response)
+    if results_dict:
+        quote_selected = (HTMLParser.HTMLParser().unescape(results_dict['quote'].rstrip()), HTMLParser.HTMLParser().unescape(results_dict['author']))
+    print quote_selected
+    return quote_selected
 
 def create_wisdom():
 
-	#Choose a random Pokemon index number
-	pokemon_index = random.randint(0, len(names))
+	# open pokemon json file
+	f = open("pokemons.json", "r")
+	all_pokemons_dicts = json.load(f)
+	f.close()
 
-	pokemon_selected = names[pokemon_index]
-
+	# Choose a random Pokemon index number
+	pokemon_index = random.randint(0, len(all_pokemons_dicts))
+	pokemon_selected = all_pokemons_dicts[pokemon_index]
+	pokemon_name = pokemon_selected["name"]
+	pic_file = open(pokemon_selected["pic_path"], "rb")
 
 	#Get quote from API
 	quote_selected = get_quotesondesign()
@@ -36,12 +41,13 @@ def create_wisdom():
 
 	noun_to_replace = random.choice(nouns) #need to take out repeats
 
-	quote_selected = (quote_selected[0].replace(noun_to_replace,pokemon_selected), quote_selected[1])
+	quote_selected = (quote_selected[0].replace(noun_to_replace,pokemon_name), quote_selected[1])
 
-	tweet = quote_selected[0] + " -" + quote_selected[1] + " #pokemon #wisdom"
+	tweet = quote_selected[0] + " -" + quote_selected[1] + " #PokemonGo"
+	print len(tweet)
 
 	if len(tweet) <= 140:
-		return tweet
+		return tweet, pic_file
 	else:
 		minutes = 10
 		time.sleep(minutes*60)
