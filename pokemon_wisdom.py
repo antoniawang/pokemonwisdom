@@ -1,11 +1,21 @@
 import HTMLParser
 import json
+import os
 import nltk
 import random
 import time
 
 from urllib2 import urlopen
 #from pokemon_names import names
+
+def abs_path(rel_path):
+	""" Gets absolute path of this current file,
+		grab its directory, append to relative path
+		to return absolute path. """
+
+	my_path = os.path.abspath(__file__)
+	my_dir = os.path.dirname(my_path)
+	return os.path.join(my_dir, rel_path)
 
 def get_quotesondesign():
     json_quotesondesign = "http://quotesondesign.com/api/3.0/api-3.0.json"
@@ -19,7 +29,7 @@ def get_quotesondesign():
 def create_wisdom():
 
 	# open pokemon json file
-	f = open("pokemons.json", "r")
+	f = open(abs_path("pokemons.json"), "r")
 	all_pokemons_dicts = json.load(f)
 	f.close()
 
@@ -27,7 +37,7 @@ def create_wisdom():
 	pokemon_index = random.randint(0, len(all_pokemons_dicts))
 	pokemon_selected = all_pokemons_dicts[pokemon_index]
 	pokemon_name = pokemon_selected["name"]
-	pic_file = open(pokemon_selected["pic_path"], "rb")
+	pic_file = open(abs_path(pokemon_selected["pic_path"]), "rb")
 
 	#Get quote from API
 	quote_selected = get_quotesondesign()
